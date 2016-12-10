@@ -39,6 +39,8 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.SupportMapFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -386,10 +388,12 @@ public class MainTabbedActivity extends AppCompatActivity implements GoogleApiCl
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
         public FoodPostingFragment mFoodPostingFragment;
+        public SupportMapFragment mMapFragment;
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
             mFoodPostingFragment = FoodPostingFragment.newInstance(1);
+            mMapFragment = SupportMapFragment.newInstance();
         }
 
         @Override
@@ -397,13 +401,19 @@ public class MainTabbedActivity extends AppCompatActivity implements GoogleApiCl
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
 //            return PlaceholderFragment.newInstance(position + 1);
-            return mFoodPostingFragment;
+            switch (position) {
+                case 0:
+                    return mFoodPostingFragment;
+                case 1:
+                    return mMapFragment;
+            }
+            return null;
         }
 
         @Override
         public int getCount() {
             // Show 3 total pages.
-            return 1;
+            return 2;
         }
 
         @Override

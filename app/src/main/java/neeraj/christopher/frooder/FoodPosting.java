@@ -14,15 +14,11 @@ public class FoodPosting {
     private double lng;
 
     FoodPosting(JSONObject obj) {
-        try {
-            this.title = obj.getString("title");
-            this.body = obj.getString("body");
-            this.time = obj.getString("time");
-            this.lat = obj.getDouble("lat");
-            this.lng = obj.getDouble("lng");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        this.title = obj.optString("title", "");
+        this.body = obj.optString("body", "");
+        this.time = obj.optString("time", "");
+        this.lat = obj.optDouble("lat", 0.0);
+        this.lng = obj.optDouble("lng", 0.0);
     }
 
     FoodPosting(String title, String body, String time, double lat, double lng) {

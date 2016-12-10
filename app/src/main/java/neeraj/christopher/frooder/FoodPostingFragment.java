@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +14,9 @@ import android.view.ViewGroup;
 import neeraj.christopher.frooder.dummy.DummyContent;
 import neeraj.christopher.frooder.dummy.DummyContent.DummyItem;
 
+import java.util.ArrayList;
 import java.util.List;
+import static neeraj.christopher.frooder.Constants.TAG;
 
 /**
  * A fragment representing a list of Items.
@@ -28,6 +31,11 @@ public class FoodPostingFragment extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
+    private MyFoodPostingRecyclerViewAdapter mListAdapter;
+
+    public MyFoodPostingRecyclerViewAdapter getListAdapter() {
+        return mListAdapter;
+    }
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -69,7 +77,12 @@ public class FoodPostingFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyFoodPostingRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            List<FoodPosting> foods = new ArrayList<>();
+            if (this.getActivity() instanceof MainTabbedActivity) {
+                foods = ((MainTabbedActivity) this.getActivity()).getFoods();
+            }
+            mListAdapter = new MyFoodPostingRecyclerViewAdapter(foods, mListener);
+            recyclerView.setAdapter(mListAdapter);
         }
         return view;
     }
@@ -104,6 +117,6 @@ public class FoodPostingFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        void onListFragmentInteraction(FoodPosting item);
     }
 }

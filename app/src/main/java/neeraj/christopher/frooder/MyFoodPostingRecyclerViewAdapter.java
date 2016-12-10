@@ -18,12 +18,17 @@ import java.util.List;
  */
 public class MyFoodPostingRecyclerViewAdapter extends RecyclerView.Adapter<MyFoodPostingRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
+    private List<FoodPosting> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public MyFoodPostingRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
+    public MyFoodPostingRecyclerViewAdapter(List<FoodPosting> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
+    }
+
+    public void resetList(List<FoodPosting> foods) {
+        mValues = foods;
+        this.notifyDataSetChanged();
     }
 
     @Override
@@ -36,8 +41,8 @@ public class MyFoodPostingRecyclerViewAdapter extends RecyclerView.Adapter<MyFoo
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
+        holder.mIdView.setText(mValues.get(position).getTime());
+        holder.mContentView.setText(mValues.get(position).getTitle());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,7 +65,7 @@ public class MyFoodPostingRecyclerViewAdapter extends RecyclerView.Adapter<MyFoo
         public final View mView;
         public final TextView mIdView;
         public final TextView mContentView;
-        public DummyItem mItem;
+        public FoodPosting mItem;
 
         public ViewHolder(View view) {
             super(view);

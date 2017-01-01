@@ -24,7 +24,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/person_photo"
+                android:id="@+id/food_photo"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
                 android:layout_marginRight="16dp"
@@ -33,18 +33,27 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/person_name"
-                android:layout_toRightOf="@+id/person_photo"
+                android:id="@+id/food_title"
+                android:layout_toRightOf="@+id/food_photo"
                 android:layout_alignParentTop="true"
-                android:textSize="30sp"
+                android:textSize="25sp"
                 />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/person_age"
-                android:layout_toRightOf="@+id/person_photo"
-                android:layout_below="@+id/person_name"
+                android:id="@+id/food_time"
+                android:layout_toRightOf="@+id/food_photo"
+                android:layout_below="@+id/food_title"
+                android:textSize="10sp"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/food_body"
+                android:layout_toRightOf="@+id/food_photo"
+                android:layout_below="@+id/food_time"
                 />
 
         </RelativeLayout>

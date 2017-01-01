@@ -39,8 +39,14 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -61,7 +67,7 @@ import static neeraj.christopher.frooder.Constants.MY_PERMISSION_ACCESS_COURSE_L
 import static neeraj.christopher.frooder.Constants.TAG;
 
 public class MainTabbedActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, FoodPostingFragment.OnListFragmentInteractionListener {
+        GoogleApiClient.OnConnectionFailedListener, FoodPostingFragment.OnListFragmentInteractionListener, OnMapReadyCallback {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -131,14 +137,14 @@ public class MainTabbedActivity extends AppCompatActivity implements GoogleApiCl
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//        });
 
 
         Log.e(TAG, "Starting up geofencing stuffs.");
@@ -175,13 +181,16 @@ public class MainTabbedActivity extends AppCompatActivity implements GoogleApiCl
     public void refreshData(final Context context) {
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(context);
-        String url = "http://frooder.herokuapp.com/";
+//        String url = "http://frooder.herokuapp.com/";
+        String url = "http://frooder.herokuapp.com/1612"; //TODO: only for testing, change back to default
+        Log.d(TAG, "Refreshing food data");
 
         JsonArrayRequest jsObjRequest = new JsonArrayRequest
                 (url, new Response.Listener<JSONArray>() {
 
                     @Override
                     public void onResponse(JSONArray response) {
+                        Log.d(TAG, "Food data response: " + response);
                         mJsonData = response;
                         mFoodPostList = new ArrayList<>();
                         mGeofenceList = new ArrayList<>();
@@ -205,6 +214,7 @@ public class MainTabbedActivity extends AppCompatActivity implements GoogleApiCl
                             onConnected(null);
                         }
                         updateListFragmentData();
+                        updateMapFragmentData();
                     }
                 }, new Response.ErrorListener() {
 
@@ -242,6 +252,10 @@ public class MainTabbedActivity extends AppCompatActivity implements GoogleApiCl
         adapter.resetList(mFoodPostList);
     }
 
+    private void updateMapFragmentData() {
+        mSectionsPagerAdapter.mMapFragment.getMapAsync(this);
+//        mSectionsPagerAdapter.mMapFragment.getTag();
+    }
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         // If the error has a resolution, start a Google Play services activity to resolve it.
@@ -324,6 +338,35 @@ public class MainTabbedActivity extends AppCompatActivity implements GoogleApiCl
         return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        LatLng minLatLng = new LatLng(40.346577, -74.654717); // default to princeton
+        LatLng maxLatLng = minLatLng;
+        for (FoodPosting food : mFoodPostList) {
+            if (food.getLat() != 0.0) {
+                googleMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(food.getLat(), food.getLng()))
+                        .title(food.getTitle()));
+
+                // update min/max latitudes
+                if (food.getLat() < minLatLng.latitude) {
+                    minLatLng = new LatLng(food.getLat(), minLatLng.longitude);
+                } else if (food.getLat() > maxLatLng.latitude) {
+                    maxLatLng = new LatLng(food.getLat(), maxLatLng.longitude);
+                }
+
+                // update min/max longitudes
+                if (food.getLng() < minLatLng.longitude) {
+                    minLatLng = new LatLng(minLatLng.latitude, food.getLng());
+                } else if (food.getLng() > maxLatLng.longitude) {
+                    maxLatLng = new LatLng(maxLatLng.latitude, food.getLng());
+                }
+            }
+        }
+        LatLngBounds bounds = new LatLngBounds(minLatLng, maxLatLng);
+        int mapPadding = 10;
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, mapPadding));
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

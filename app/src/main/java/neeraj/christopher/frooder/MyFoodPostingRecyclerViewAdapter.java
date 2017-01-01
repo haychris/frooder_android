@@ -41,8 +41,9 @@ public class MyFoodPostingRecyclerViewAdapter extends RecyclerView.Adapter<MyFoo
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).getTime());
-        holder.mContentView.setText(mValues.get(position).getTitle());
+        holder.mTimeView.setText(mValues.get(position).getTime());
+        holder.mTitleView.setText(mValues.get(position).getTitle());
+        holder.mBodyView.setText(mValues.get(position).getBody());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,20 +64,23 @@ public class MyFoodPostingRecyclerViewAdapter extends RecyclerView.Adapter<MyFoo
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
+//        public final TextView mPhotoView;
+        public final TextView mTitleView;
+        public final TextView mTimeView;
+        public final TextView mBodyView;
         public FoodPosting mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.person_age);
-            mContentView = (TextView) view.findViewById(R.id.person_name);
+            mTimeView = (TextView) view.findViewById(R.id.food_time);
+            mTitleView = (TextView) view.findViewById(R.id.food_title);
+            mBodyView = (TextView) view.findViewById(R.id.food_body);
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + mTitleView.getText() + "'";
         }
     }
 }
